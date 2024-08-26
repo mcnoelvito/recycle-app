@@ -8,22 +8,35 @@
         </ion-card-header>
 
         <ion-card-content>
+          <!-- Email Field -->
           <ion-item>
             <ion-label position="floating">Email</ion-label>
             <ion-input type="email" formControlName="email"></ion-input>
           </ion-item>
-          <app-error-message [field]="form.get('email')" error="required" message="Email is mandatory"></app-error-message>
-          <app-error-message [field]="form.get('email')" error="email" message="Email is invalid"></app-error-message>
+          <app-error-message
+            [field]="form.get('email')"
+            error="required"
+            message="Email is mandatory">
+          </app-error-message>
+          <app-error-message
+            [field]="form.get('email')"
+            error="email"
+            message="Email is invalid">
+          </app-error-message>
 
-
+          <!-- Password Field -->
           <ion-item>
             <ion-label position="floating">Password</ion-label>
             <ion-input type="password" formControlName="password"></ion-input>
           </ion-item>
-          <app-error-message [field]="form.get('password')" error="required" message="Password is mandatory"></app-error-message>
-          
+          <app-error-message
+            [field]="form.get('password')"
+            error="required"
+            message="Password is mandatory">
+          </app-error-message>
 
-          <ion-button color="dark" fill="clear" size="full">Lupa email/password</ion-button>
+          <!-- Action Buttons -->
+          <ion-button color="dark" fill="clear" size="full" (click)="forgotPassword()">Lupa email/password</ion-button>
           <ion-button color="primary" size="full" [disabled]="!form.valid" (click)="login()">Masuk</ion-button>
           <ion-button color="primary" fill="clear" size="full" [disabled]="!form.valid" (click)="register()">Daftar</ion-button>
         </ion-card-content>
