@@ -1,32 +1,38 @@
-// login.page.ts
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';  // Impor Router untuk navigasi
+import { FormGroup } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
+import { LoginPageForm } from './login.page.form';
+import { Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
 })
-export class LoginPage {
-  ngOnInit() {
-    throw new Error('Method not implemented.');
-  }
-  form: FormGroup;
+export class LoginPage implements OnInit {
 
-  constructor(private fb: FormBuilder) {
-    this.form = this.fb.group({
+  form!: FormGroup;
+
+  constructor(private router: Router, private formBuilder: FormBuilder) { }  // Injeksi Router
+
+  ngOnInit() {
+    this.form = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
     });
   }
 
+
   login() {
-    if (this.form.valid) {
-      // Logic untuk login
-    }
+
+
+
+    this.router.navigate(['home']);
   }
 
   register() {
-    // Logic untuk register
+    this.router.navigate(['register']);
   }
+
 }
