@@ -1,5 +1,8 @@
 <ion-header>
   <ion-toolbar color="lightblue">
+    <ion-buttons slot="start">
+      <ion-back-button title=""></ion-back-button>
+    </ion-buttons>
     <ion-title>Daftar Akun</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -60,5 +63,5 @@
       </ion-card-content>
     </ion-card>
 
-  <ion-button color="primary" size="full">Daftar</ion-button>
+  <ion-button color="primary" size="full" (click)="register()">Daftar</ion-button>
 </ion-content>
