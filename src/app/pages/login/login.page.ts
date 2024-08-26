@@ -10,7 +10,7 @@ import { LoginPageForm } from './login.page.form';
 })
 export class LoginPage implements OnInit {
 
-  form: FormGroup;
+  form!: FormGroup;
   constructor(private router: Router, private formBuilder: FormBuilder) { }
 
   ngOnInit() {
