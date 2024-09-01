@@ -9,7 +9,7 @@ import { FormGroup } from '@angular/forms';
 export class ErrorMessageComponent implements OnInit {
 
   @Input() message: string='';
-  @Input() field!: FormGroup ;
+  @Input() field!: FormGroup;
   @Input() error!: string;
 
 
@@ -19,7 +19,7 @@ export class ErrorMessageComponent implements OnInit {
 
   shouldShowComponent(){
     //form.get('email')?.touched && form.get('email')?.errors?.['required']
-    if (this.field.touched && this.field.errors?.[this.error]) {
+    if (this.field.touched && this.field.errors?.[this.error!]){
       return true;
     }
     return false;

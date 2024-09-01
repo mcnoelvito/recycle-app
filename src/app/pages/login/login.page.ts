@@ -4,6 +4,7 @@ import { FormGroup } from '@angular/forms';
 import { FormBuilder } from '@angular/forms';
 import { LoginPageForm } from './login.page.form';
 import { Validators } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
