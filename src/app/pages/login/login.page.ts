@@ -5,6 +5,9 @@ import { FormBuilder } from '@angular/forms';
 import { LoginPageForm } from './login.page.form';
 import { Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
+import { hide, show } from 'src/store/loading/loading.actions';
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/store/AppState';
 
 @Component({
   selector: 'app-login',
@@ -15,13 +18,18 @@ export class LoginPage implements OnInit {
 
   form!: FormGroup;
 
-  constructor(private router: Router, private formBuilder: FormBuilder) { }  // Injeksi Router
+  constructor(private router: Router, private formBuilder: FormBuilder, private store: Store<AppState>) { }  // Injeksi Router
 
   ngOnInit() {
-    this.form = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
-    });
+    this.form = new LoginPageForm(this.formBuilder).createForm();
+  }
+
+  forgotEmailPassword() {
+    this.store.dispatch(show());
+
+    setTimeout(() => {
+      this.store.dispatch(hide());
+    }, 3000)
   }
 
 

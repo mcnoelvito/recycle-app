@@ -26,7 +26,8 @@
           <ion-label color="danger" *ngIf="form.get('password')?.touched && form.get('password')?.errors?.['minlength']">Password must be at least 6 characters</ion-label>
 
           <!-- Action Buttons -->
-          <ion-button color="dark" fill="clear" size="full" [disabled]="!form.get('email')?.valid">Lupa email/password</ion-button>
+          <ion-button color="dark" fill="clear" size="full" [disabled]="!form.get('email')?.valid"
+            (click)="forgotEmailPassword()">Lupa email/password</ion-button>
           <ion-button color="primary" size="full" [disabled]="!form.valid" (click)="login()">Masuk</ion-button>
           <ion-button color="primary" fill="clear" size="full" (click)="register()">Daftar</ion-button>
         </ion-card-content>

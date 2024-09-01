@@ -1,2 +1,4 @@
-<ion-spinner name="crescent" size="28" color="success"></ion-spinner>
+<div class="backdrop" *ngIf="(loadingState$ | async)?.show">
+  <ion-spinner name="crescent" size="28" color="success"></ion-spinner>
+</div>
 
