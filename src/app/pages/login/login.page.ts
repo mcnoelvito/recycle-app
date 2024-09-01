@@ -27,9 +27,9 @@ export class LoginPage implements OnInit {
   ngOnInit() {
     this.form = new LoginPageForm(this.formBuilder).createForm();
 
-    this.store.select('login').subscribe(async loginstate => {
-
-
+    this.store.select('login').subscribe(loginState => {
+      this.onIsRecoveringPassword(loginState);
+      this.onIsRecoveredPassword(loginState);
     })
   }
 
