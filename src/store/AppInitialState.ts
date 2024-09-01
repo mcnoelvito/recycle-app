@@ -11,6 +11,5 @@ login: {
   isLoggingIn: false,
   isRecoveredPassword: false,
   isRecoveringPassword: false,
-  user: null
 }
 }
