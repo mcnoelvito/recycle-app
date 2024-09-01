@@ -20,10 +20,20 @@ const reducer = createReducer(initialState,
     };
   }),
   on(recoverPasswordSuccess, currentState => {
-    return currentState;
+    return {
+        ...currentState,
+        error: null,
+        isRecoveredPassword: true,
+        isRecoveringPassword: false,
+      }; // currentState;
   }),
-  on(recoverPasswordFail, currentState => {
-    return currentState;
+  on(recoverPasswordFail, (currentState, action) => {
+    return {
+      ...currentState,
+      error: action.error,
+      isRecoveredPassword: false,
+      isRecoveringPassword: false,
+    };
   }),
 )
 
