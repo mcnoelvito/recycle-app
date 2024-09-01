@@ -10,7 +10,7 @@ import { loginReducer } from 'src/store/login/login.reducers';
 import { StoreModule, Store } from '@ngrx/store';
 import { AppState } from 'src/store/AppState';
 import { By } from '@angular/platform-browser';
-import { recoverPassword, recoverPasswordSuccess } from 'src/store/login/login.actions';
+import { recoverPassword, recoverPasswordFail, recoverPasswordSuccess } from 'src/store/login/login.actions';
 
 describe('LoginPage', () => {
   let component: LoginPage;
@@ -78,6 +78,7 @@ describe('LoginPage', () => {
   })
   it('should hide loading and show success message when has recovered password', () => {
     spyOn(toastController, 'create');
+    
     fixture.detectChanges();
     store.dispatch(recoverPassword());
     store.dispatch(recoverPasswordSuccess());
@@ -85,5 +86,11 @@ describe('LoginPage', () => {
       expect(loadingState.show).toBeFalsy();
     })
     expect(toastController.create).toHaveBeenCalledTimes(1);
+
+  })
+  it('should hide loading and show error message when has not recover password', () => {
+    fixture.detectChanges ();
+store.dispatch(recoverPassword());
+store.dispatch(recoverPasswordFail({error: "message"}));
   })
 });
