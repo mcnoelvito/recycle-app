@@ -11,6 +11,9 @@ import { StoreModule, Store } from '@ngrx/store';
 import { AppState } from 'src/store/AppState';
 import { By } from '@angular/platform-browser';
 import { recoverPassword, recoverPasswordFail, recoverPasswordSuccess } from 'src/store/login/login.actions';
+import { AuthService } from 'src/app/services/auth/auth.service';
+import { User } from 'src/app/model/user/User';
+import { of } from 'rxjs';
 
 describe('LoginPage', () => {
   let component: LoginPage;
@@ -19,6 +22,7 @@ describe('LoginPage', () => {
   let page: { querySelector: (arg0: string) => { (): any; new(): any; click: { (): void; new(): any; }; }; };
   let store: Store<AppState>;
   let toastController: ToastController;
+  let authService: AuthService;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -40,6 +44,8 @@ describe('LoginPage', () => {
     router = TestBed.inject(Router);
     store = TestBed.inject(Store);
     toastController = TestBed.inject(ToastController);
+    authService = TestBed.inject(AuthService);
+
     component = fixture.componentInstance;
     page = fixture.debugElement.nativeElement;  // Trigger ngOnInit and initial rendering
   }));
@@ -97,17 +103,20 @@ store.select('loading').subscribe(loadingState => {
 })
 expect(toastController.create).toHaveBeenCalledTimes(1);
   })
-  it('should hide loading and start login  when logging in', () => {
-    fixture.detectChanges ();
-component.form.get('email')?.setValue("valid@email.com");
-component.form.get('password')?.setValue("anyPAssword");
-page.querySelector('#loginButton').click();
-store.select('loading').subscribe(loadingState => {
-  expect(loadingState.show).toBeTruthy();
-})
-store.select('login').subscribe(loadingState => {
-  expect(loadingState.isLoggingIn).toBeFalsy();
-})
-})
+it('should hide loading and start login  when logging in', () => {
+  spyOn(router, 'navigate');
+  spyOn(authService, 'login').and.returnValue(of(new User()));
 
+  fixture.detectChanges ();
+    component.form.get('email')?.setValue("valid@email.com");
+    component.form.get('password')?.setValue("anyPAssword");
+    page.querySelector('#loginButton').click();
+    store.select('loading').subscribe(loadingState => {
+      expect(loadingState.show).toBeTruthy();
+    })
+    store.select('login').subscribe(loadingState => {
+      expect(loadingState.isLoggingIn).toBeFalsy();
+    })
+      expect(router.navigate).toHaveBeenCalledWith(['home']);
+      })
 });
