@@ -13,7 +13,7 @@ import { By } from '@angular/platform-browser';
 import { recoverPassword, recoverPasswordFail, recoverPasswordSuccess } from 'src/store/login/login.actions';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { User } from 'src/app/model/user/User';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 describe('LoginPage', () => {
   let component: LoginPage;
@@ -119,4 +119,20 @@ it('should hide loading and start login  when logging in', () => {
     })
       expect(router.navigate).toHaveBeenCalledWith(['home']);
       })
+
+it('should hide loading and show error when user couldnt login', () => {
+  spyOn(authService, 'login').and.returnValue(throwError({message: 'error'}));
+  spyOn(toastController, 'create').and.returnValue(<any> Promise.resolve({present: () => {}}));
+
+
+  fixture.detectChanges();
+  component.form.get('email')!.setValue('error@email.com');
+  component.form.get('password')!.setValue('anyPassword');
+  page.querySelector('#loginButton').click();
+  store.select('loading').subscribe(loadingState => {
+    expect(loadingState.show).toBeFalsy();
+  })
+  expect(toastController.create).toHaveBeenCalledTimes(1);
+
+    })
 });

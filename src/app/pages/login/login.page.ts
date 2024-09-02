@@ -8,7 +8,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { hide, show } from 'src/store/loading/loading.actions';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/store/AppState';
-import { login, loginSuccess, recoverPassword, recoverPasswordFail, recoverPasswordSuccess } from 'src/store/login/login.actions';
+import { login, loginFail, loginSuccess, recoverPassword, recoverPasswordFail, recoverPasswordSuccess } from 'src/store/login/login.actions';
 import { ToastController } from '@ionic/angular';
 import { LoginState } from 'src/store/login/LoginState';
 import { AuthService } from 'src/app/services/auth/auth.service';
@@ -35,7 +35,7 @@ export class LoginPage implements OnInit, OnDestroy {
     this.loginStateSubscription = this.store.select('login').subscribe(loginState => {
       this.onIsRecoveringPassword(loginState);
       this.onIsRecoveredPassword(loginState);
-      this.onIsRecoveringPasswordFail(loginState);
+      this.onIsRecoveringPassword(loginState);
 
       this.onIsLoggingIn(loginState);
       this.onIsLoggedIn(loginState);
@@ -67,12 +67,15 @@ export class LoginPage implements OnInit, OnDestroy {
       const email = this.form.get('email')?.value;
       const password = this.form.get('password')?.value;
       this.authService.login(email, password).subscribe(user => {
+        
         this.store.dispatch(loginSuccess({user}));
+      }, error => {
+        this.store.dispatch(loginFail({error}));
       })
     }
   }
 
-  private async onIsRecoveringPasswordFail(loginState: LoginState){
+  private async onError(loginState: LoginState){
     if (loginState.error) {
       const toaster = await this.toastController.create({
         position: "bottom",
