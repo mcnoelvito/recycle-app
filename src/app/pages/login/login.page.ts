@@ -8,7 +8,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { hide, show } from 'src/store/loading/loading.actions';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/store/AppState';
-import { recoverPassword, recoverPasswordFail, recoverPasswordSuccess } from 'src/store/login/login.actions';
+import { login, recoverPassword, recoverPasswordFail, recoverPasswordSuccess } from 'src/store/login/login.actions';
 import { ToastController } from '@ionic/angular';
 import { LoginState } from 'src/store/login/LoginState';
 import { AuthService } from 'src/app/services/auth/auth.service';
@@ -92,7 +92,7 @@ export class LoginPage implements OnInit, OnDestroy {
 
 
   login() {
-    this.router.navigate(['home']);
+    this.store.dispatch(login());
   }
 
   register() {

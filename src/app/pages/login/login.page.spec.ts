@@ -78,7 +78,7 @@ describe('LoginPage', () => {
   })
   it('should hide loading and show success message when has recovered password', () => {
     spyOn(toastController, 'create');
-    
+
     fixture.detectChanges();
     store.dispatch(recoverPassword());
     store.dispatch(recoverPasswordSuccess());
@@ -92,5 +92,22 @@ describe('LoginPage', () => {
     fixture.detectChanges ();
 store.dispatch(recoverPassword());
 store.dispatch(recoverPasswordFail({error: "message"}));
+store.select('loading').subscribe(loadingState => {
+  expect(loadingState.show).toBeFalsy();
+})
+expect(toastController.create).toHaveBeenCalledTimes(1);
   })
+  it('should hide loading and start login  when logging in', () => {
+    fixture.detectChanges ();
+component.form.get('email')?.setValue("valid@email.com");
+component.form.get('password')?.setValue("anyPAssword");
+page.querySelector('#loginButton').click();
+store.select('loading').subscribe(loadingState => {
+  expect(loadingState.show).toBeTruthy();
+})
+store.select('login').subscribe(loadingState => {
+  expect(loadingState.isLoggingIn).toBeFalsy();
+})
+})
+
 });
