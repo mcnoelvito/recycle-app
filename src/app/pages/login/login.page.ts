@@ -13,6 +13,7 @@ import { ToastController } from '@ionic/angular';
 import { LoginState } from 'src/store/login/LoginState';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { Subscription } from 'rxjs';
+;
 
 @Component({
   selector: 'app-login',
@@ -26,9 +27,7 @@ export class LoginPage implements OnInit, OnDestroy {
 
   constructor(private router: Router, private formBuilder: FormBuilder, private store: Store<AppState>,
     private toastController: ToastController, private authService: AuthService) { }  // Injeksi Router
-  ngOnDestroy(): void {
-    throw new Error('Method not implemented.');
-  }
+
 
   ngOnInit() {
     this.form = new LoginPageForm(this.formBuilder).createForm();
@@ -37,16 +36,26 @@ export class LoginPage implements OnInit, OnDestroy {
       this.onIsRecoveringPassword(loginState);
       this.onIsRecoveredPassword(loginState);
       this.onIsRecoveringPasswordFail(loginState);
+
+      if (loginState.isLoggedIn) {
+        this.store.dispatch(show());
+      }
     })
   }
+  ngOnDestroy() {
+    if (this.loginStateSubscription) {
+      this.loginStateSubscription.unsubscribe();
+    }
+  }
+
 
   private async onIsRecoveringPasswordFail(loginState: LoginState){
     if (loginState.error) {
       this.store.dispatch(hide());
       const toaster = await this.toastController.create({
         position: "bottom",
-        message: loginState.error.message,
-        color: "danger"
+        message: "Recovery email sent",
+        color: "primary"
       });
       toaster.present();
     }
