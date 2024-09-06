@@ -27,8 +27,9 @@ export class AuthService {
 
   login(email: string, password: string) : Observable<User> {
     return new Observable<User>(observer => {
-    this.auth.sendPasswordResetEmail(email).then(() => {
-      this.auth.sendPasswordResetEmail(email).then(() => {
+    this.auth.setPersistence(firebase.default.auth.Auth.Persistence.LOCAL).then(() => {
+      this.auth.signInWithEmailAndPassword(email, password)
+      .then((firebaseUser: firebase.default.auth.UserCredential) => {
         observer.next();
         observer.complete();
       }).catch(error => {
@@ -37,7 +38,7 @@ export class AuthService {
       })
     })
   }
-  
+
 );
   }
 }
