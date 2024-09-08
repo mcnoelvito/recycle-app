@@ -87,7 +87,7 @@ describe('LoginPage', () => {
 
 
     fixture.detectChanges();
-    store.dispatch(recoverPassword());
+    store.dispatch(recoverPassword({email: "valid@email.com"}));
     store.dispatch(recoverPasswordSuccess());
     store.select('loading').subscribe(loadingState => {
       expect(loadingState.show).toBeFalsy();
@@ -97,7 +97,7 @@ describe('LoginPage', () => {
   })
   it('given user is recovering password, when fail, then hide loading and show error message', () => {
     fixture.detectChanges ();
-store.dispatch(recoverPassword());
+store.dispatch(recoverPassword({email: "valid@email.com"}));
 store.dispatch(recoverPasswordFail({error: "message"}));
 store.select('loading').subscribe(loadingState => {
   expect(loadingState.show).toBeFalsy();
