@@ -11,7 +11,7 @@ import { AppState } from 'src/store/AppState';
 import { login, loginFail, loginSuccess, recoverPassword, recoverPasswordFail, recoverPasswordSuccess } from 'src/store/login/login.actions';
 import { ToastController } from '@ionic/angular';
 import { LoginState } from 'src/store/login/LoginState';
-import { AuthService } from 'src/app/services/auth/auth.service';
+
 import { Subscription } from 'rxjs';
 ;
 
@@ -26,18 +26,18 @@ export class LoginPage implements OnInit, OnDestroy {
   loginStateSubscription!: Subscription;
 
   constructor(private router: Router, private formBuilder: FormBuilder, private store: Store<AppState>,
-    private toastController: ToastController, private authService: AuthService) { }  // Injeksi Router
+    private toastController: ToastController) { }  // Injeksi Router
 
 
   ngOnInit() {
     this.form = new LoginPageForm(this.formBuilder).createForm();
 
     this.loginStateSubscription = this.store.select('login').subscribe(loginState => {
-      this.onIsRecoveringPassword(loginState);
-      this.onIsRecoveredPassword(loginState);
-      this.onIsRecoveringPassword(loginState);
 
-      this.onIsLoggingIn(loginState);
+      this.onIsRecoveredPassword(loginState);
+
+
+      
       this.onIsLoggedIn(loginState);
 
       this.toggleLoding(loginState);
@@ -62,18 +62,8 @@ export class LoginPage implements OnInit, OnDestroy {
     }
   }
 
-  private onIsLoggingIn(loginState: LoginState){
-    if (loginState.isLoggingIn) {
-      const email = this.form.get('email')?.value;
-      const password = this.form.get('password')?.value;
-      this.authService.login(email, password).subscribe(user => {
-        
-        this.store.dispatch(loginSuccess({user}));
-      }, error => {
-        this.store.dispatch(loginFail({error}));
-      })
-    }
-  }
+
+
 
   private async onError(loginState: LoginState){
     if (loginState.error) {
@@ -86,22 +76,7 @@ export class LoginPage implements OnInit, OnDestroy {
     }
   }
 
-  private onIsRecoveringPassword(loginState: LoginState){
-    if (loginState.isRecoveringPassword) {
 
-      this.authService.recoverEmailPassword(this.form.get('email')?.value).subscribe(() => {
-        this.store.dispatch(recoverPasswordSuccess());
-    }, error => {
-      this.store.dispatch(show());
-
-      this.authService.recoverEmailPassword(this.form.get('email')?.value).subscribe(() => {
-        this.store.dispatch(recoverPasswordSuccess());
-    }, error => {
-      this.store.dispatch(recoverPasswordFail({error}))
-    });
-    });
-  }
-}
 
   private async onIsRecoveredPassword(loginState: LoginState){
     if (loginState.isRecoveredPassword) {

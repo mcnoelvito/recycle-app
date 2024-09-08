@@ -10,10 +10,14 @@ import { loginReducer } from 'src/store/login/login.reducers';
 import { StoreModule, Store } from '@ngrx/store';
 import { AppState } from 'src/store/AppState';
 import { By } from '@angular/platform-browser';
-import { recoverPassword, recoverPasswordFail, recoverPasswordSuccess } from 'src/store/login/login.actions';
+import { login, loginFail, loginSuccess, recoverPassword, recoverPasswordFail, recoverPasswordSuccess } from 'src/store/login/login.actions';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { User } from 'src/app/model/user/User';
-import { of, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
+import { AngularFireModule } from '@angular/fire/compat';
+import { environment } from 'src/environments/environment';
+
+
 
 describe('LoginPage', () => {
   let component: LoginPage;
@@ -22,7 +26,7 @@ describe('LoginPage', () => {
   let page: { querySelector: (arg0: string) => { (): any; new(): any; click: { (): void; new(): any; }; }; };
   let store: Store<AppState>;
   let toastController: ToastController;
-  let authService: AuthService;
+
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -33,7 +37,8 @@ describe('LoginPage', () => {
         ReactiveFormsModule,
         StoreModule.forRoot({}),
         StoreModule.forFeature("loading", loadingReducer),
-        StoreModule.forFeature("login", loginReducer)
+        StoreModule.forFeature("login", loginReducer),
+        AngularFireModule.initializeApp(environment.firebaseConfig)
       ],
       providers: [
         FormBuilder
@@ -44,7 +49,6 @@ describe('LoginPage', () => {
     router = TestBed.inject(Router);
     store = TestBed.inject(Store);
     toastController = TestBed.inject(ToastController);
-    authService = TestBed.inject(AuthService);
 
     component = fixture.componentInstance;
     page = fixture.debugElement.nativeElement;  // Trigger ngOnInit and initial rendering
@@ -67,23 +71,20 @@ describe('LoginPage', () => {
   });
 
   it('should recover email/password on forgot email/password', () => {
+
     fixture.detectChanges();
     component.form?.get('email')?.setValue("valid@email.com");
     page.querySelector('#recoveryPasswordButton').click();
     store.select('login').subscribe(loginState => {
       expect(loginState.isRecoveringPassword).toBeTruthy();
     })
-  })
-  it('should show loading when recovering password', () => {
-    fixture.detectChanges();
-    store.dispatch(recoverPassword());
-    page.querySelector('#recoveryPasswordButton').click();
     store.select('loading').subscribe(loadingState => {
       expect(loadingState.show).toBeTruthy();
     })
   })
-  it('should hide loading and show success message when has recovered password', () => {
-    spyOn(toastController, 'create');
+  it('given user is recovering password, when success, then hide loading and show success message', () => {
+    spyOn(toastController, 'create').and.returnValue(<any> Promise.resolve({present: () =>{}}));
+
 
     fixture.detectChanges();
     store.dispatch(recoverPassword());
@@ -94,7 +95,7 @@ describe('LoginPage', () => {
     expect(toastController.create).toHaveBeenCalledTimes(1);
 
   })
-  it('should hide loading and show error message when has not recover password', () => {
+  it('given user is recovering password, when fail, then hide loading and show error message', () => {
     fixture.detectChanges ();
 store.dispatch(recoverPassword());
 store.dispatch(recoverPasswordFail({error: "message"}));
@@ -103,36 +104,48 @@ store.select('loading').subscribe(loadingState => {
 })
 expect(toastController.create).toHaveBeenCalledTimes(1);
   })
-it('should hide loading and start login  when logging in', () => {
-  spyOn(router, 'navigate');
-  spyOn(authService, 'login').and.returnValue(of(new User()));
 
-  fixture.detectChanges ();
-    component.form.get('email')?.setValue("valid@email.com");
-    component.form.get('password')?.setValue("anyPAssword");
+
+it('should show loading and start login when logging in', () => {
+
+    fixture.detectChanges();
+    component.form.get('email')!.setValue('valid@email.com');
+    component.form.get('password')!.setValue('anyPassword');
     page.querySelector('#loginButton').click();
     store.select('loading').subscribe(loadingState => {
-      expect(loadingState.show).toBeTruthy();
+    expect(loadingState.show).toBeTruthy();
     })
-    store.select('login').subscribe(loadingState => {
-      expect(loadingState.isLoggingIn).toBeFalsy();
-    })
-      expect(router.navigate).toHaveBeenCalledWith(['home']);
-      })
+    store.select('login').subscribe(loginState => {
+    expect(loginState.isLoggingIn).toBeTruthy();
+    });
+  })
 
-it('should hide loading and show error when user couldnt login', () => {
-  spyOn(authService, 'login').and.returnValue(throwError({message: 'error'}));
-  spyOn(toastController, 'create').and.returnValue(<any> Promise.resolve({present: () => {}}));
-
+it('given user is logging in, when success, then hide loading and send user to home page', () => {
+  spyOn(router, 'navigate');
 
   fixture.detectChanges();
-  component.form.get('email')!.setValue('error@email.com');
-  component.form.get('password')!.setValue('anyPassword');
-  page.querySelector('#loginButton').click();
+  store.dispatch(login());
+  store.dispatch(loginSuccess({user: new User()}));
+
   store.select('loading').subscribe(loadingState => {
     expect(loadingState.show).toBeFalsy();
   })
-  expect(toastController.create).toHaveBeenCalledTimes(1);
+  expect(router.navigate).toHaveBeenCalledWith(['home']);
 
     })
+
+    it('given user is logging in, when fail, then hide loading and show error message', () => {
+      spyOn(toastController, 'create').and.returnValue(<any> Promise.resolve({present: () =>{}}));
+
+
+      fixture.detectChanges();
+      store.dispatch(login());
+      store.dispatch(loginFail({error: {message: 'error message'}}));
+
+      store.select('loading').subscribe(loadingState => {
+        expect(loadingState.show).toBeFalsy();
+      })
+      expect(toastController.create).toHaveBeenCalledTimes(1);
+
+        })
 });
