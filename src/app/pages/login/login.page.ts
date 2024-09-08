@@ -99,7 +99,10 @@ export class LoginPage implements OnInit, OnDestroy {
 
 
   login() {
-    this.store.dispatch(login());
+    this.store.dispatch(login({
+      email: this.form.get('email')?.value,
+      password: this.form.get('password')?.value
+    }));
   }
 
   register() {

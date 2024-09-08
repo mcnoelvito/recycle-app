@@ -45,7 +45,7 @@ expect (newState). toEqual({
   })
   it('login', () => {
     const initialState: LoginState = AppInitialState.login;
-    const newState = loginReducer(initialState, login());
+    const newState = loginReducer(initialState, login({email: "any@email,com", password: "anyPassword"}));
     expect (newState). toEqual({
       ... initialState,
       error: null,
